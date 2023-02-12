@@ -14,13 +14,14 @@
 #include "analog_microphone.h"
 #include "analog_microphone.c"
 #include "tusb.h"
-
+#include <ctime>
+#include <iostream>
 
 char ssid[] = "";
 char pass[] = "";
 
 // configuration
-#define INSIZE 16
+#define INSIZE 1024
 const struct analog_microphone_config config = {
     // GPIO to use for input, must be ADC compatible (GPIO 26 - 28)
     .gpio = 26,
@@ -40,6 +41,13 @@ int16_t sample_buffer[INSIZE];
 volatile int samples_read = 0;
 
 float features[10800];
+
+const int minutes = .3;
+const int threshold = 10;
+const float thresh = 0.9;
+
+int count_label_on = 0;
+std::time_t start_time = std::time(0);
 
 void on_analog_samples_ready() {
     // callback from library when all the samples in the library
@@ -92,7 +100,7 @@ int main(void) {
 
     // start capturing data from the analog microphone
     if (analog_microphone_start() < 0) {
-        ei_printf("PDM microphone start failed!\n");
+        ei_printf("Analog microphone start failed!\n");
         while (1) {
             tight_loop_contents();
         }
@@ -107,11 +115,6 @@ int main(void) {
     //}
     
     while (1) {
-
-        ei_printf("\nStarting inferencing in 2 seconds...\n");
-        //sleep_ms(3000);
-        ei_printf("Sampling...\n");
-
         // wait for new samples
         while (samples_read == 0) {
             tight_loop_contents();
@@ -120,7 +123,7 @@ int main(void) {
         // store and clear the samples read from the callback
         int sample_count = samples_read;
         samples_read = 0;
-        ei_printf("sample_count returned: %d\n", sample_count);
+        //printf("sample_count returned: %d\n", sample_count);
 
         // loop through any new collected samples
         for (int i = 0; i < sample_count; i++) { //sample_count returned: 16
@@ -128,11 +131,11 @@ int main(void) {
             //printf("%f \n", (float)sample_buffer[i]);
         }
 
-        ei_printf("size of features/floats: %d\n", sizeof(features) / sizeof(float));
-        ei_printf("EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE: %.3f\n", EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE);
-        ei_printf("EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME: %.3f\n", EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME);
-        ei_printf("size of features returned: %d\n", sizeof(features));
-        ei_printf("total_length: %d\n", sizeof(features) / sizeof(features[0]));
+        //printf("size of features/floats: %d\n", sizeof(features) / sizeof(float));
+        //printf("EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE: %.3f\n", EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE);
+        //printf("EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME: %.3f\n", EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME);
+        //printf("size of features returned: %d\n", sizeof(features));
+        //printf("total_length: %d\n", sizeof(features) / sizeof(features[0]));
 
         //sample_count returned: 16
         //size of features/floats: 2700
@@ -152,7 +155,7 @@ int main(void) {
         // invoke the impulse
         EI_IMPULSE_ERROR res = run_classifier(&features_signal, &result, false);
 
-        ei_printf("run_classifier returned: %d\n", res);
+        //ei_printf("run_classifier returned: %d\n", res);
 
         if (res != 0)
             return 1;
@@ -163,7 +166,27 @@ int main(void) {
         // print the predictions
         ei_printf("[");
         for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
-            ei_printf("%.5f", result.classification[ix].value);
+            ei_printf("%.5f\n", result.classification[ix].value);
+
+            if (ix == 1 && result.classification[ix].value > thresh) {
+              count_label_on++;
+            } else {
+              //count_label_on = 0;
+            }
+
+            if (result.classification[0].value > result.classification[1].value) {
+              count_label_on = 0;
+            }
+
+            if (count_label_on >= threshold) {
+              std::time_t current_time = std::time(0);
+              if (current_time - start_time >= minutes * 60) {
+                printf("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF\n");
+                count_label_on = 0;
+                start_time = std::time(0);
+              }
+            } 
+
             #if EI_CLASSIFIER_HAS_ANOMALY == 1
             ei_printf(", ");
             #else
@@ -176,10 +199,10 @@ int main(void) {
         printf("%.3f", result.anomaly);
         #endif
         printf("]\n");
-
-        memset(features, 0, sizeof(float) * sample_count);
         
-        sleep_ms(2000);
+        
+
+        //sleep_ms(2000);
 
     }
 
