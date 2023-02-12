@@ -39,7 +39,7 @@ const struct analog_microphone_config config = {
 int16_t sample_buffer[INSIZE];
 volatile int samples_read = 0;
 
-float features[2700];
+float features[10800];
 
 void on_analog_samples_ready() {
     // callback from library when all the samples in the library
@@ -123,7 +123,7 @@ int main(void) {
         ei_printf("sample_count returned: %d\n", sample_count);
 
         // loop through any new collected samples
-        for (int i = 0; i < sample_count; i++) {
+        for (int i = 0; i < sample_count; i++) { //sample_count returned: 16
             features[i] = (float)sample_buffer[i];
             //printf("%f \n", (float)sample_buffer[i]);
         }
@@ -132,14 +132,14 @@ int main(void) {
         ei_printf("EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE: %.3f\n", EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE);
         ei_printf("EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME: %.3f\n", EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME);
         ei_printf("size of features returned: %d\n", sizeof(features));
-        ei_printf("size of features returned: %d\n", sizeof(features) / sizeof(features[0]));
+        ei_printf("total_length: %d\n", sizeof(features) / sizeof(features[0]));
 
         //sample_count returned: 16
         //size of features/floats: 2700
         //EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE: 0.000
         //EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME: 0.000
         //size of features returned: 10800
-        //size of features returned: 2700
+        //total_length: 2700
         //run_classifier returned: 0
 
 
@@ -179,7 +179,7 @@ int main(void) {
 
         memset(features, 0, sizeof(float) * sample_count);
         
-        sleep_ms(3000);
+        sleep_ms(2000);
 
     }
 
