@@ -83,7 +83,9 @@ int main(void) {
             tight_loop_contents();
         }
     }
-  
+
+    
+    
     while (1) {
         // wait for new samples
         while (samples_read == 0) {
@@ -98,7 +100,6 @@ int main(void) {
         for (int i = 0; i < sample_count; i++) {
             printf("%f \n", (float)sample_buffer[i]);
         }
-        printf("\nFDFDFDFD");
     }
 
     return 0;
