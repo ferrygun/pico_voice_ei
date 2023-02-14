@@ -21,7 +21,7 @@ char ssid[] = "";
 char pass[] = "";
 
 // configuration
-#define INSIZE 1024
+#define INSIZE 16
 const struct analog_microphone_config config = {
     // GPIO to use for input, must be ADC compatible (GPIO 26 - 28)
     .gpio = 26,
@@ -103,8 +103,6 @@ int main(void) {
         }
     }
 
-    printf("sdssdsdsd");
-
     //if (sizeof(features) / sizeof(float) != EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE)
     //{
     //  ei_printf("The size of your 'features' array is not correct. Expected %d items, but had %u\n",
@@ -121,7 +119,7 @@ int main(void) {
         // store and clear the samples read from the callback
         int sample_count = samples_read;
         samples_read = 0;
-        printf("sample_count returned: %d\n", sample_count);
+        //printf("sample_count returned: %d\n", sample_count);
 
         // loop through any new collected samples
         for (int i = 0; i < sample_count; i++) { //sample_count returned: 1024
@@ -135,13 +133,13 @@ int main(void) {
         printf("size of features returned: %d\n", sizeof(features));
         printf("total_length: %d\n", sizeof(features) / sizeof(features[0]));
 
-        //sample_count returned: 16
+        //sample_count returned: 1024
         //size of features/floats: 2700
         //EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE: 0.000
         //EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME: 0.000
         //size of features returned: 10800
         //total_length: 2700
-        //run_classifier returned: 0
+
 
 
         // the features are stored into flash, and we don't want to load everything into RAM
@@ -164,7 +162,7 @@ int main(void) {
         // print the predictions
         ei_printf("[");
         for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
-            ei_printf("%.5f\n", result.classification[ix].value);
+            ei_printf("%.5f", result.classification[ix].value);
 
             if (ix == 1 && result.classification[ix].value > thresh) {
               count_label_on++;
@@ -200,7 +198,7 @@ int main(void) {
         
         
 
-        //sleep_ms(2000);
+        //sleep_ms(500);
 
     }
 
