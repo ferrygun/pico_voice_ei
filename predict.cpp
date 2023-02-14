@@ -128,8 +128,9 @@ int main(void) {
         
 
         // loop through any new collected samples
-        for (int i = 0; i < sample_count; i++) { //sample_count returned: 1024
+        for (int i = 0; i < sample_count; i++) { //sample_count returned: 16
             features[i] = (float)sample_buffer[i];
+            //features[i] = static_cast<float>(sample_buffer[i]);
             //printf("%f \n", (float)sample_buffer[i]);
         }
 
