@@ -40,10 +40,18 @@ void on_analog_samples_ready() {
     samples_read = analog_microphone_read(sample_buffer, INSIZE);
 }
 
+void wait_for_usb() {
+    while (!tud_cdc_connected()) {
+        printf(".");
+        sleep_ms(500);
+    }
+    printf("usb host detected\n");
+}   
+
 int main(void) {
     // initialize stdio and wait for USB CDC connect
     stdio_init_all();
-    stdio_usb_init();
+    wait_for_usb();
 
     ei_impulse_result_t result = {
         nullptr
@@ -86,6 +94,7 @@ int main(void) {
         // store and clear the samples read from the callback
         int sample_count = samples_read;
         samples_read = 0;
+        //printf("sample_count returned: %d\n", sample_count);
         
         // loop through any new collected samples
         for (int i = 0; i < sample_count; i++) {
