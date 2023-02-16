@@ -120,17 +120,10 @@ int main(void) {
         
 
         // loop through any new collected samples
-        for (int i = 0; i < sample_count; i++) { //sample_count returned: 16
-            //features[i] = (float)sample_buffer[i];
-            //feature = static_cast<float>(*sample_buffer++);
-            //printf("%f \n", (float)sample_buffer[i]);
-            features[i] = static_cast<float>(sample_buffer[i]);
-
+        for (int i = 0; i < sample_count; i++) { //sample_count returned: 2700
+            features[i] = (float)sample_buffer[i];
+            
         }
-
-    
-    
-
 
         printf("sample_count returned: %d\n", sample_count);
         printf("size of features/floats: %d\n", sizeof(features) / sizeof(float));
@@ -140,14 +133,12 @@ int main(void) {
         printf("total_length: %d\n", sizeof(features) / sizeof(features[0]));
         printf("\n");
 
-        //sample_count returned: 16
+        //sample_count returned: 2700
         //size of features/floats: 2700
-        //EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE: 0.000
-        //EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME: 0.000
+        //EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE:2700
+        //EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME:1
         //size of features returned: 10800
         //total_length: 2700
-
-
 
         // the features are stored into flash, and we don't want to load everything into RAM
         signal_t features_signal;
@@ -169,7 +160,7 @@ int main(void) {
         // print the predictions
         ei_printf("[");
         for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
-            ei_printf("%.5f", result.classification[ix].value);
+            ei_printf("    %s: %.5f\n", result.classification[ix].label, result.classification[ix].value);
 
            
             #if EI_CLASSIFIER_HAS_ANOMALY == 1
