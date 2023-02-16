@@ -16,7 +16,10 @@
 #include "tusb.h"
 
 // configuration
-#define INSIZE 16
+#define INSIZE 2700
+int16_t sample_buffer[INSIZE];
+volatile int samples_read = 0;
+
 const struct analog_microphone_config config = {
     // GPIO to use for input, must be ADC compatible (GPIO 26 - 28)
     .gpio = 26,
@@ -30,6 +33,12 @@ const struct analog_microphone_config config = {
     // number of samples to buffer
     .sample_buffer_size = INSIZE,
 };
+
+void on_analog_samples_ready() {
+    // callback from library when all the samples in the library
+    // internal sample buffer are ready for reading 
+    samples_read = analog_microphone_read(sample_buffer, INSIZE);
+}
 
 int main(void) {
     // initialize stdio and wait for USB CDC connect
