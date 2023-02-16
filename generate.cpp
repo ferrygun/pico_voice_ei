@@ -31,24 +31,6 @@ const struct analog_microphone_config config = {
     .sample_buffer_size = INSIZE,
 };
 
-// variables
-int16_t sample_buffer[INSIZE];
-volatile int samples_read = 0;
-
-float features[INSIZE];
-
-void on_analog_samples_ready() {
-    // callback from library when all the samples in the library
-    // internal sample buffer are ready for reading 
-    samples_read = analog_microphone_read(sample_buffer, INSIZE);
-}
-
-int raw_feature_get_data(size_t offset, size_t length, float * out_ptr) {
-    memcpy(out_ptr, features + offset, length * sizeof(float));
-    return 0;
-}
-
-
 int main(void) {
     // initialize stdio and wait for USB CDC connect
     stdio_init_all();
