@@ -19,7 +19,8 @@ char ssid[] = "";
 char pass[] = "";
 
 // configuration
-#define INSIZE EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE
+#define INSIZE 16
+
 const struct analog_microphone_config config = {
     // GPIO to use for input, must be ADC compatible (GPIO 26 - 28)
     .gpio = 26,
@@ -38,7 +39,7 @@ const struct analog_microphone_config config = {
 int16_t sample_buffer[INSIZE];
 volatile int samples_read = 0;
 
-float features[INSIZE];
+float features[EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE];
 
 const int minutes = .3;
 const int threshold = 10;
@@ -160,7 +161,7 @@ int main(void) {
         // print the predictions
         ei_printf("[");
         for (size_t ix = 0; ix < EI_CLASSIFIER_LABEL_COUNT; ix++) {
-            ei_printf("    %s: %.5f\n", result.classification[ix].label, result.classification[ix].value);
+            ei_printf("%s: %.5f", result.classification[ix].label, result.classification[ix].value);
 
            
             #if EI_CLASSIFIER_HAS_ANOMALY == 1
@@ -178,7 +179,7 @@ int main(void) {
         
         
 
-        //sleep_ms(500);
+        ei_sleep(2000);
 
     }
 
