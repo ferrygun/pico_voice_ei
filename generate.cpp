@@ -14,9 +14,11 @@
 #include "analog_microphone.h"
 #include "analog_microphone.c"
 #include "tusb.h"
+#include "edge-impulse-sdk/dsp/numpy.hpp"
+
 
 // configuration
-#define INSIZE 2700
+#define INSIZE 16
 int16_t sample_buffer[INSIZE];
 volatile int samples_read = 0;
 
@@ -52,10 +54,6 @@ int main(void) {
     // initialize stdio and wait for USB CDC connect
     stdio_init_all();
     wait_for_usb();
-
-    ei_impulse_result_t result = {
-        nullptr
-    };
 
     while (!tud_cdc_connected()) {
         tight_loop_contents();
@@ -98,7 +96,7 @@ int main(void) {
         
         // loop through any new collected samples
         for (int i = 0; i < sample_count; i++) {
-            printf("%f \n", (float)sample_buffer[i]);
+            printf("%f \n", float(sample_buffer[i]));
         }
     }
 
