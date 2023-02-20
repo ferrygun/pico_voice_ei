@@ -22,7 +22,7 @@ static const float features_[] = {
 };
 
 // configuration
-#define INSIZE EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE
+#define INSIZE EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE 
 
 const struct analog_microphone_config config = {
     // GPIO to use for input, must be ADC compatible (GPIO 26 - 28)
@@ -124,10 +124,16 @@ int main(void) {
     */
     
     while (1) {
+
+
         // wait for new samples
         while (samples_read == 0) {
             tight_loop_contents();
         }
+
+
+        ei_printf("\nStarting inferencing in 3 seconds...\n");
+        sleep_ms(3000);
 
         // store and clear the samples read from the callback
         int sample_count = samples_read;
@@ -141,7 +147,7 @@ int main(void) {
             
         }
         
-
+        /*
         printf("sample_count returned: %d\n", sample_count);
         printf("size of features/floats: %d\n", sizeof(features) / sizeof(float));
         printf("EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE:%d\n", EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE);
@@ -149,6 +155,7 @@ int main(void) {
         printf("size of features returned: %d\n", sizeof(features));
         printf("total_length: %d\n", sizeof(features) / sizeof(features[0]));
         printf("\n");
+        */
 
         // the features are stored into flash, and we don't want to load everything into RAM
         signal_t features_signal;
@@ -185,10 +192,6 @@ int main(void) {
         printf("%.3f", result.anomaly);
         #endif
         printf("]\n");
-        
-        
-
-        ei_sleep(2000);
 
     }
 
