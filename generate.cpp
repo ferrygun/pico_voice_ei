@@ -18,7 +18,7 @@
 
 
 // configuration
-#define INSIZE 4000
+#define INSIZE 2232
 int16_t sample_buffer[INSIZE];
 volatile int samples_read = 0;
 
