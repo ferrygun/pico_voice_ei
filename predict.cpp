@@ -35,7 +35,7 @@ const struct analog_microphone_config config = {
     .sample_rate = 16000,
 
     // number of samples to buffer
-    .sample_buffer_size = INSIZE,
+    .sample_buffer_size = 4000,
 };
 
 // variables
