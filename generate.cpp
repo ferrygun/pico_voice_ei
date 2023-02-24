@@ -18,8 +18,8 @@
 
 
 // configuration
-#define INSIZE 2232
-int16_t sample_buffer[INSIZE];
+#define INSIZE 256 
+int16_t sample_buffer[INSIZE * 16];
 volatile int samples_read = 0;
 
 const struct analog_microphone_config config = {
@@ -96,7 +96,7 @@ int main(void) {
         
         // loop through any new collected samples
         for (int i = 0; i < sample_count; i++) {
-            printf("%f \n", float(sample_buffer[i]));
+            printf("%d\n", sample_buffer[i]);
         }
     }
 
