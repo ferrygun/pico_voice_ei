@@ -15,6 +15,7 @@
 #include "analog_microphone.c"
 #include "tusb.h"
 
+//https://studio.edgeimpulse.com/studio/172452/acquisition/training?page=1
 static const float features_[] = {
     // copy raw features here (for example from the 'Live classification' page)
     //tr 2232
